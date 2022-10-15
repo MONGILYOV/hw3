@@ -1,6 +1,6 @@
-// Copyright Mongilyov Andrey 2022
+// Copyright Mongilyov Andrey & Novikov Igor 2022
 
-#include "../include/myFunctions.hpp"
+#include <myFunctions.hpp>
 
 #include <iostream>
 

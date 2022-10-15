@@ -1,9 +1,9 @@
-//
-// Created by Андрей Монгилёв on 14.10.2022.
-//
+// Copyright Mongilyov Andrey & Novikov Igor 2022
 
 #ifndef WAYFIND_MYFUNCTIONS_HPP_
 #define WAYFIND_MYFUNCTIONS_HPP_
+
+#include <iostream>
 
 void printHelloWorld();
 

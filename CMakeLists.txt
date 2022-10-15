@@ -1,11 +1,21 @@
-cmake_minimum_required(VERSION 2.81)
+cmake_minimum_required(VERSION 3.18)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(WayFind)
 
-include_directories(./src/include)
-set(SOURCE_EXE sources/main.cpp)
-set(SOURCE_LIB sources/myFunctions.cpp)
-add_executable(WayFind ${SOURCE_EXE})
-add_library(WayFindLib STATIC ${SOURCE_LIB})
+add_library(${PROJECT_NAME} STATIC
+        sources/myFunctions.cpp
+        )
 
-target_link_libraries(WayFind WayFindLib)
+add_executable(WayFindExecutable
+        ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
+        )
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<INSTALL_INTERFACE:include>"
+        )
+
+target_link_libraries(WayFindExecutable ${PROJECT_NAME})

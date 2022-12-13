@@ -1,10 +1,14 @@
 // Copyright Mongilyov Andrey & Novikov Igor 2022
 
-#ifndef WAYFIND_MYFUNCTIONS_HPP_
-#define WAYFIND_MYFUNCTIONS_HPP_
+#ifndef INCLUDE_MAP_HPP_
+#define INCLUDE_MAP_HPP_
 
+#include <fstream>
 #include <iostream>
+#include <vector>
 
-void printHelloWorld();
+std::string isCorrect(const std::string &file_name, size_t &c, size_t &len);
+void enterData(const std::string &file_name, size_t &c, size_t &len, std::vector<std::vector<int>> &matrix,
+               size_t &sx, size_t &sy, size_t &ex, size_t &ey);
 
-#endif //WAYFIND_MYFUNCTIONS_HPP_
+#endif // INCLUDE_MAP_HPP_

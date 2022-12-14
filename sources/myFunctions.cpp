@@ -153,7 +153,7 @@ void saveInFile(std::vector<std::vector<int>>& matrix, size_t height, size_t len
                     file << '|';
                     break;
                 case -3:
-                    file << '@';
+                    file << '*';
                     break;
                 default:
                     file << ' ';

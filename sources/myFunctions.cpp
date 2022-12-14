@@ -94,6 +94,9 @@ void enterData(const std::string &file_name, size_t &c, size_t &len, std::vector
         std::getline(fint, temp);
         for (size_t k = 0; k < len; ++k) {
             switch (temp[k]) {
+                // -1 - стена
+                // -2 - пустое поле, начало и конец
+                // -3 - конечный путь
                 case '|':
                     matrix[i][k] = -1;
                     break;
@@ -101,15 +104,15 @@ void enterData(const std::string &file_name, size_t &c, size_t &len, std::vector
                     matrix[i][k] = -1;
                     break;
                 case ' ':
-                    matrix[i][k] = 0;
+                    matrix[i][k] = -2;
                     break;
                 case '*':
-                    matrix[i][k] = 0; // пока так, если будет удобно, то оставим
+                    matrix[i][k] = -2;
                     sx = k; // sx и sy - координаты начала
                     sy = i;
                     break;
                 case '!':
-                    matrix[i][k] = 0; // пока так, если будет удобно, то оставим
+                    matrix[i][k] = -2;
                     ex = k; // ex и ey - координаты конца
                     ey = i;
                     break;
@@ -118,4 +121,109 @@ void enterData(const std::string &file_name, size_t &c, size_t &len, std::vector
     }
     fint.close();
 }
-// todo: Волновой алгоритм и вывод
+
+void saveInFile(std::vector<std::vector<int>>& matrix, size_t height, size_t length,
+                   size_t sx, size_t sy, size_t ex, size_t ey, const std::string& filename) {
+    std::ofstream file(filename, std::ios::app);
+    for (size_t i = 0; i < length; ++i) {
+        if (sy == 0 && sx == i) {
+            file << '*';
+            continue;
+        }
+        if (ey == 0 && ex == i) {
+            file << '!';
+            continue;
+        }
+        file << '-';
+    }
+    file << std::endl;
+
+    for (size_t y = 1; y < height - 1; ++y) {
+        for (size_t x = 0; x < length; ++x) {
+            if (y == sy && x == sx) {
+                file << '*';
+                continue;
+            }
+            if (y == ey && x == ex) {
+                file << '!';
+                continue;
+            }
+            switch (matrix[y][x]) {
+                case -1:
+                    file << '|';
+                    break;
+                case -3:
+                    file << '@';
+                    break;
+                default:
+                    file << ' ';
+                    break;
+            }
+        }
+        file << std::endl;
+    }
+
+    for (size_t i = 0; i < length; ++i) {
+        if (sy == height - 1 && sx == i) {
+            file << '*';
+            continue;
+        }
+        if (ey == height - 1 && ex == i) {
+            file << '!';
+            continue;
+        }
+        file << '-';
+    }
+    file << std::endl;
+    file.close();
+}
+
+void waveAlgorithm(std::vector<std::vector<int>>& matrix, size_t height, size_t length,
+                   size_t sx, size_t sy, size_t ex, size_t ey, const std::string& filename) {
+    int dx[4] = {-1, 0, 0, 1}; // слева, снизу, сверху, справа
+    int dy[4] = {0, -1, 1, 0};
+    int i = 0; // волна
+    matrix[sy][sx] = 0;
+    while (matrix[ey][ex] == -2 && i < height * length) { // костыль, чтобы выйти из цикла если пути нет
+        for (size_t y = 0; y < height; ++y) {
+            for (size_t x = 0; x < length; ++x) {
+                if (matrix[y][x] == i) {
+                    for (size_t j = 0; j < 4; ++j) {
+                        int tempY = y + dy[j];
+                        int tempX = x + dx[j];
+                        if ((tempY >= 0 && tempY < height) && (tempX >= 0 && tempX < length) &&
+                        matrix[tempY][tempX] == -2) {
+                            matrix[tempY][tempX] = i + 1; // сдвигаем волну
+                        }
+                    }
+                }
+            }
+        }
+        ++i;
+    }
+
+    if (matrix[ey][ex] == -2) {
+        std::cout << "There is no way" << std::endl;
+    }
+
+    // восстановление пути
+    i = matrix[ey][ex];
+    int x = ex;
+    int y = ey;
+    matrix[ey][ex] = -3; // путь
+    while (i > 0) {
+        --i;
+        for (size_t j = 0; j < 4; ++j) {
+            int tempY = y + dy[j];
+            int tempX = x + dx[j];
+            if ((tempY >= 0 && tempY < height) && (tempX >= 0 && tempX < length) &&
+                matrix[tempY][tempX] == i) {
+                x = tempX;
+                y = tempY;
+                matrix[tempY][tempX] = -3;
+            }
+        }
+    }
+
+    saveInFile(matrix, height, length, sx, sy, ex, ey, filename);
+}

@@ -2,15 +2,17 @@
 
 #include <myFunctions.hpp>
 
-int main() {
+int main(int argc, char* args[]) {
+    // c - количество строк
+    // len - количество столбцов
+    // sx, sy - координаты начала
+    // ex, ey - координаты конца
+    if (argc == 1) {
+        std::cout << "Error: no filename" << std::endl;
+        return -1;
+    }
     size_t c = 0, len = 0, sx = 0, sy = 0, ex = 0, ey = 0;
     std::vector<std::vector<int>> matrix;
-    // TODO: file_name из командной строки
-    enterData("labirint5.txt", c, len, matrix, sx, sy, ex, ey);
-    for (const auto& row : matrix) {
-        for (const auto& column : row) {
-            std::cout << column << '\t';
-        }
-        std::cout << std::endl;
-    }
+    enterData(args[1], c, len, matrix, sx, sy, ex, ey);
+    waveAlgorithm(matrix, c, len, sx, sy, ex, ey, args[1]);
 }
